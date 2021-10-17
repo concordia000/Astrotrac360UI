@@ -41,3 +41,5 @@ Adapted from version 1.1 of Astrotrac 360 Web UI. Slew and encoder mapping logic
  
 
 6. If my code worked this far, I suppose you can let it press the Goto button and theoretically it should slew to Andromeda Galaxy, if the polar alignment and one star alignment were done correctly.
+
+7. If the mount start behaving erratically, switch it off and on again. It should be back to normal.
