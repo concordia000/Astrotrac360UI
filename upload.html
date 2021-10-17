@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<meta http-equiv="Content-Style-Type" content="text/css">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<meta name="HandheldFriendly" content="true" />
+	<link rel="shortcut icon" type="image/png" href="favicon.ico"/>
+	<title>AstroTrac 360 Control</title>
+	<link rel="stylesheet" href="jquery.mobile-1.4.5.min.css" />
+	<link rel="stylesheet" href="style.css" />
+	<script src="jquery-1.11.1.min.js"></script>
+	<script src="jquery.mobile-1.4.5.min.js"></script>
+</head>
+
+<body>
+	<div data-role="page" id="testpage" class="ui-page-theme-b">
+
+	<div data-role="header">
+		<a id="custom-tabs__home" href="AstroTrac360.html" rel="external" class="ui-btn ui-shadow ui-btn-icon-left ui-btn-icon-notext"><img src="home.svg"></a>
+		<a id="custom-tabs__settings" rel="external" href="AstroTrac360.html?tab=settings" class="ui-btn ui-btn-icon-left ui-shadow ui-btn-icon-notext"><img src="setting.svg"></a>
+		<h1>AstroTrac 360</h1>
+		<a href="javascript:;" onclick="toggleFullScreen()" class="ui-btn ui-btn-right ui-shadow ui-btn-icon-notext"><img style="height:30px;" src="fullscreen-icon.png"></a>
+	</div><!-- /header -->
+
+	<div class="ui-content" role="main">
+		<h1>Upload File</h1>
+		<form data-ajax="false" method="post" enctype="multipart/form-data">
+			<div class="custom-file-upload-wrapper">
+			  <label for="file-upload" class="ui-btn custom-file-upload ui-input-btn ui-corner-all ui-shadow">
+					Choose File: No file chosen
+			  </label>
+				<div style="display:none;opacity:0;">
+					<input id="file-upload" type="file" name="name" >
+				</div>
+			</div>
+			<input id="file-upload-submit" disabled class="button" type="submit" value="Upload">
+		</form>
+	</div>
+
+	<div class="footer-copyright">
+		&copy; AstroTrac 2020 v1.0
+	</div>
+
+	</div> <!-- /#page -->
+
+	<script>
+		/* Toggle Screen Fullscreen */
+		function toggleFullScreen() {
+			var doc = window.document;
+			var docEl = doc.documentElement;
+
+			var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+			var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+			if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+				requestFullScreen.call(docEl);
+			}
+			else {
+				cancelFullScreen.call(doc);
+			}
+		}
+
+		/* Update File Name on Upload Button */
+		$(document).ready(function(){
+			$('#file-upload').change(function() {
+				var file = $('#file-upload')[0].files[0].name;
+				$(this).closest('.custom-file-upload-wrapper').find('label').text('Selected File: ' + file);
+				$('#file-upload-submit').button('enable');  ;
+			});
+		});
+	</script>
+	<script src="internal.js"/>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="HandheldFriendly" content="true" />
+<title>AstroTrac 360 Control</title>
+<link rel="shortcut icon" type="image/png" href="favicon.ico"/>
+<link rel="stylesheet" href="jquery.mobile-1.4.5.min.css" />
+<link rel="stylesheet" href="style.css" />
+
+<!-- jQuery Mobile -->
+<script src="jquery-1.11.1.min.js"></script>
+<script src="jquery.mobile-1.4.5.min.js"></script>
+</head>
+<body>
+
+<div data-role="page" id="testpage" class="ui-page-theme-b">
+
+<div data-role="header">
+  <a id="custom-tabs__home" href="AstroTrac360.html" rel="external" class="ui-btn ui-shadow ui-btn-icon-left ui-btn-icon-notext"><img src="home.svg"></a>
+  <a id="custom-tabs__settings" rel="external" href="AstroTrac360.html?tab=settings" class="ui-btn ui-btn-icon-left ui-shadow ui-btn-icon-notext"><img src="setting.svg"></a>
+  <h1>AstroTrac 360</h1>
+  <a href="javascript:;" onclick="toggleFullScreen()" class="ui-btn ui-btn-right ui-shadow ui-btn-icon-notext"><img style="height:30px;" src="fullscreen-icon.png"></a>
+</div><!-- /header -->
+
+<div class="ui-content" role="main">
+	<p>File successfully uploaded!</p>
+	<!--p>Click browser back button to reload</p>-->
+	<a rel="external" href="upload.html"><button>Upload another file</button></a><br/>
+</div>
+
+<div class="footer-copyright">
+  &copy; AstroTrac 2020 v1.0
+</div>
+
+</div> <!-- /#page -->
+
+<script>
+	/* Toggle Screen Fullscreen */
+	function toggleFullScreen() {
+	  var doc = window.document;
+	  var docEl = doc.documentElement;
+
+	  var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+	  var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+	  if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+	    requestFullScreen.call(docEl);
+	  }
+	  else {
+	    cancelFullScreen.call(doc);
+	  }
+	}
+</script>
+
+</body>
+</html>

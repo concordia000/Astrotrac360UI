@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>AstroTrac 360 Position Error</title>
+	</head>
+  <script src="jquery.min.js"></script>
+	<script src="dygraph-combined.js"></script>
+	<script>
+		console.log("self.location.host=" + self.location.host);
+		connection = new WebSocket('ws://' + self.location.host + ':81');
+
+		connection.onerror = function (error) {
+			console.log('WebSocket Error ', error);
+		};
+
+		connection.onmessage = function (e) {
+			var obj = JSON.parse(e.data);
+			console.log(obj);
+
+			dataSet.push([obj.t,obj.a,obj.s]);
+			g.updateOptions({'file': dataSet});
+
+			//document.getElementById("placeholder").innerHTML += e.data + "<br/>";
+		};
+	</script>
+	</head>
+	<body>
+    	<div id="div_g" style="width:1500px; height:750px;"></div>
+    	<script>
+    		var dataSet = [];
+				dataSet.push([0,0,0]);
+
+				<!--Dygraph options: http://dygraphs.com/options.html#Overall display-->
+				var g = new Dygraph(document.getElementById("div_g"), dataSet,
+									{
+										drawPoints: false,
+										showRoller: false,
+										legend: "always",
+										colors: ["#FF0000","#0000FF"],
+										pixelsPerLabel: 35,
+										xlabel: 'Time (sidereal seconds)',
+										ylabel: 'Position Error (arcseconds)',
+										title: 'AstroTrac 360 Position Error',
+										labels: ['Time', 'ATOM Pos Err', 'Ref Pos Err']
+									});
+    	</script>
+	</body>
+</html>
