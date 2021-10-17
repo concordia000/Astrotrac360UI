@@ -2,6 +2,8 @@
 
 Adapted from version 1.1 of Astrotrac 360 Web UI. Slew and encoder mapping logics adapted from https://github.com/indilib/indi/blob/master/drivers/telescope/astrotrac.cpp
 
+**This software is provided on an "As-Is" basis and I am not responsible for any consequence resulted from using this software.**
+
 **Instructions:**
 
  
