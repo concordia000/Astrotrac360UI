@@ -2,6 +2,8 @@
 
 Adapted from version 1.1 of Astrotrac 360 Web UI. Slew and encoder mapping logics adapted from https://github.com/indilib/indi/blob/master/drivers/telescope/astrotrac.cpp
 
+**This software is provided on an "As-Is" basis and I am not responsible for any consequence resulted from using this software.**
+
 **Instructions:**
 
  
@@ -32,6 +34,8 @@ Adapted from version 1.1 of Astrotrac 360 Web UI. Slew and encoder mapping logic
 
 5. Enter the RA, DEC coordinates of the alignment star/object in decimal degrees. I know it is a pain to convert the coordinates, but for simplicity you might have to make do for now.
 
+    Use this website to get the decimal degree coordinates: https://www.swift.psu.edu/secure/toop/convert.htm
+
     What this will do is to create a "local alignment" by calculating the local sidereal time at the time of alignment.
 
     *Refreshing the page will lose the alignment and the connection, but it might be a good thing to do if the mount started behaving eratically. 
@@ -39,3 +43,5 @@ Adapted from version 1.1 of Astrotrac 360 Web UI. Slew and encoder mapping logic
  
 
 6. If my code worked this far, I suppose you can let it press the Goto button and theoretically it should slew to Andromeda Galaxy, if the polar alignment and one star alignment were done correctly.
+
+7. If the mount start behaving erratically, switch it off and on again. It should be back to normal.
