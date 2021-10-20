@@ -267,8 +267,11 @@ function startAlignment(RATarString, DECTarString) {
     currentCommand = "ALIGN";
     try {
         $("#alignSubmitBtn").prop('disabled', true);
-        RATarget = parseFloat(RATarString);
-        DECTarget = parseFloat(DECTarString);
+        // RATarget = parseFloat(RATarString);
+        // DECTarget = parseFloat(DECTarString);
+        // Translation
+        RATarget = parseFloat(hmsToDecimal(RATarString));
+        DECTarget = dmsToDecimal(DECTarString);
         getRALoc();
     } catch (e) {
         $("#alignSubmitBtn").prop('disabled', false);
@@ -299,7 +302,7 @@ function setAlignment(ra, dec) {
 // https://github.com/indilib/indi/blob/master/drivers/telescope/astrotrac.cpp
 function getLSTFromEncoders(haEncoder, deEncoder, raPos) {
     var ha = 0;
-
+    // rapos = parseFloat(raPos);
     // Take care of jitter
     if (haEncoder > jitter * -1 && haEncoder < jitter)
         haEncoder = 0;
@@ -330,10 +333,56 @@ function getLSTFromEncoders(haEncoder, deEncoder, raPos) {
             ha = 6.0 - (haEncoder / 360.0) * 24.0;
         }
     }
+    consoleWrite("Mount Hour Angle (decimal degrees):" + ha);
+    consoleWrite("Mount RA Position (source):" + raPos);
+    // console.log("Mount RA Position (decimal hours):" + raPos / 360 * 24);
 
-    var lst = range24(raPos / 360 * 24 + 6 + ha);
-    // return [lst, ha];
-    return lst;
+    var Lst = range24(raPos + rangeHA(ha));
+    consoleWrite("Local sidereal time:" + Lst);
+    // return [Lst, ha];
+    return Lst;
+}
+
+function getRADEFromEncoders(haEncoder, deEncoder) {
+    var ha = 0;
+
+    // Take care of jitter
+    if (haEncoder > jitter * -1 && haEncoder < jitter)
+        haEncoder = 0;
+    if (deEncoder > jitter * -1 && deEncoder < jitter)
+        deEncoder = 0;
+
+    // Northern Hemisphere
+    if (hemisphere == HEM.N) {
+        // "Normal" Pointing State (East, looking West)
+        if (mountConfig = CONF.SINGLEARM || deEncoder >= 0) {
+            de = Math.min(90 - deEncoder, 90.0);
+            ha = -6.0 + (haEncoder / 360.0) * 24.0;
+        }
+        // "Reversed" Pointing State (West, looking East)
+        else {
+            de = 90 + deEncoder;
+            ha = 6.0 + (haEncoder / 360.0) * 24.0;
+        }
+    } else {
+        // East
+        if (mountConfig = CONF.SINGLEARM || deEncoder <= 0) {
+            de = Math.max(-90 - deEncoder, -90.0);
+            ha = -6.0 - (haEncoder / 360.0) * 24.0;
+        }
+        // West
+        else {
+            de = -90 + deEncoder;
+            ha = 6.0 - (haEncoder / 360.0) * 24.0;
+        }
+    }
+
+    // var Lst = range24(raPos / 360 * 24 + 6 + ha);
+    var dt = (Date.now() - raAlignTime) / (1000 * 3600); //convert to hours
+    var Lst = range24(lstAtAlign + dt);
+    ra = range24(Lst - rangeHA(ha));
+    // return [Lst, ha];
+    return [ra, de];
 }
 
 // get encorder positions from given ra/de coordinates, adapted from Indi
@@ -343,8 +392,8 @@ function getEncodersFromRADE(ra, de) {
     var deEncoder = 0;
     // Time elapsed since alignment
     var dt = (Date.now() - raAlignTime) / (1000 * 3600); //convert to hours
-    var lst = range24(lstAtAlign + dt);
-    var dHA = rangeHA(lst - ra);
+    var Lst = range24(lstAtAlign + dt);
+    var dHA = rangeHA(Lst - ra);
     // Northern Hemisphere
     if (hemisphere == HEM.N) {
         // "Normal" Pointing State (East, looking West)
@@ -413,14 +462,14 @@ function GOTOTarget(RASlewTarget, DECSlewTarget, targetDescription) {
             cmdQ.push(MNT.DRV2 + DRV.POS + DECDes);
             sendCmd();
             setTimeout(function() {
-                console.log("Slew complete");
+                consoleWrite("Slew complete");
                 currentCommand = "";
             }, tmax);
         } catch (e) {
-            console.log("Error when trying to slew: " + e);
+            consoleWrite("Error when trying to slew: " + e);
         }
     } else {
-        console.log("Alignment/Slew pending.");
+        consoleWrite("Alignment/Slew pending.");
     }
 }
 
