@@ -141,8 +141,8 @@ const ERR = {
 Object.freeze(ERR);
 
 const CONF = {
-    GEM: false,
-    SINGLEARM: true,
+    GEM: 0,
+    SINGLEARM: 1,
 }
 
 var ws;
@@ -312,7 +312,7 @@ function getLSTFromEncoders(haEncoder, deEncoder, raPos) {
     // Northern Hemisphere
     if (hemisphere == HEM.N) {
         // "Normal" Pointing State (East, looking West)
-        if (mountConfig = CONF.SINGLEARM || deEncoder >= 0) {
+        if (mountConfig == CONF.SINGLEARM || deEncoder >= 0) {
             // de = Math.min(90 - deEncoder, 90.0);
             ha = -6.0 + (haEncoder / 360.0) * 24.0;
         }
@@ -323,7 +323,7 @@ function getLSTFromEncoders(haEncoder, deEncoder, raPos) {
         }
     } else {
         // East
-        if (mountConfig = CONF.SINGLEARM || deEncoder <= 0) {
+        if (mountConfig == CONF.SINGLEARM || deEncoder <= 0) {
             // de = Math.max(-90 - deEncoder, -90.0);
             ha = -6.0 - (haEncoder / 360.0) * 24.0;
         }
@@ -355,7 +355,7 @@ function getRADEFromEncoders(haEncoder, deEncoder) {
     // Northern Hemisphere
     if (hemisphere == HEM.N) {
         // "Normal" Pointing State (East, looking West)
-        if (mountConfig = CONF.SINGLEARM || deEncoder >= 0) {
+        if (mountConfig == CONF.SINGLEARM || deEncoder >= 0) {
             de = Math.min(90 - deEncoder, 90.0);
             ha = -6.0 + (haEncoder / 360.0) * 24.0;
         }
@@ -366,7 +366,7 @@ function getRADEFromEncoders(haEncoder, deEncoder) {
         }
     } else {
         // East
-        if (mountConfig = CONF.SINGLEARM || deEncoder <= 0) {
+        if (mountConfig == CONF.SINGLEARM || deEncoder <= 0) {
             de = Math.max(-90 - deEncoder, -90.0);
             ha = -6.0 - (haEncoder / 360.0) * 24.0;
         }
@@ -394,25 +394,26 @@ function getEncodersFromRADE(ra, de) {
     var dt = (Date.now() - raAlignTime) / (1000 * 3600); //convert to hours
     var Lst = range24(lstAtAlign + dt);
     var dHA = rangeHA(Lst - ra);
+    console.log("dHA=" + dHA);
     // Northern Hemisphere
     if (hemisphere == HEM.N) {
         // "Normal" Pointing State (East, looking West)
-        if (mountConfig = CONF.SINGLEARM || dHA <= 0) {
+        if (mountConfig == CONF.SINGLEARM || dHA <= 0) {
             deEncoder = -(de - 90.0);
             haEncoder = (dHA + 6.0) * 360.0 / 24.0;
         }
-        // "Reversed" Pointing State (West, looking East)
+        // "Reversed" Pointing State (West, looking East) (Post-Meridian)
         else {
             deEncoder = de - 90.0;
             haEncoder = (dHA - 6.0) * 360.0 / 24.0;
         }
     } else {
-        // "Normal" Pointing State (East, looking West)
-        if (mountConfig = CONF.SINGLEARM || dHA <= 0) {
+        // "Normal" Pointing State (East, looking West) 
+        if (mountConfig == CONF.SINGLEARM || dHA <= 0) {
             deEncoder = -(de + 90.0);
             haEncoder = -(dHA + 6.0) * 360.0 / 24.0;
         }
-        // "Reversed" Pointing State (West, looking East)
+        // "Reversed" Pointing State (West, looking East) (Post-Meridian)
         else {
             deEncoder = (de + 90.0);
             haEncoder = -(dHA - 6.0) * 360 / 24.0;
@@ -500,7 +501,7 @@ function processCmd(cmd) {
         DRV1PosPending = false;
 
         // if alignment
-        if (currentCommand = "ALIGN") {
+        if (currentCommand == "ALIGN") {
             if (!DRV1PosPending && !DRV2PosPending) {
                 setAlignment(DRV1Pos, DRV2Pos);
             }
@@ -526,7 +527,7 @@ function processCmd(cmd) {
         DRV2PosPending = false;
 
         // if alignment
-        if (currentCommand = "ALIGN") {
+        if (currentCommand == "ALIGN") {
             if (!DRV1PosPending && !DRV2PosPending) {
                 setAlignment(DRV1Pos, DRV2Pos);
             }
