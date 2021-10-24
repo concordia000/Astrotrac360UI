@@ -444,6 +444,13 @@ function calculateSlewTime(distance) {
     }
 }
 
+function goToHome() {
+    consoleWrite("Going to neutral position...")
+    cmdQ.push(MNT.DRV1 + DRV.POS + "0");
+    cmdQ.push(MNT.DRV2 + DRV.POS + "0");
+    sendCmd();
+}
+
 function GOTOTarget(RASlewTarget, DECSlewTarget, targetDescription) {
     //Calculate the destination drive position
     if (currentCommand == "") {

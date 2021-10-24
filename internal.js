@@ -246,6 +246,7 @@ $(document).ready(function() {
     });
     //M31 button
     $("#goToM31Btn").click(goToM31);
+    $("#goToHomeBtn").click(goToHome);
     $("#abortBtn").click(function() {
         stopSlew(MNT.DRV1);
         stopSlew(MNT.DRV2);
