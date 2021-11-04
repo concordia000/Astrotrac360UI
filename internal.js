@@ -237,11 +237,21 @@ $(document).ready(function() {
     //enable alignment command btn
     $("#alignSubmitBtn").click(function() {
         var RAIn = $("#alignRAInput").val();
-        var DECIn = $("#alignRAInput").val();
+        var DECIn = $("#alignDECInput").val();
         if ((RAIn != "") && (DECIn != "")) {
             startAlignment(RAIn, DECIn);
         } else {
             consoleWrite("Incomplete RA, DEC inputs for alignment");
+        }
+    });
+    //enable goto command btn
+    $("#gotoSubmitBtn").click(function() {
+        var RAIn = $("#gotoRAInput").val();
+        var DECIn = $("#gotoDECInput").val();
+        if ((RAIn != "") && (DECIn != "")) {
+            startGoto(RAIn, DECIn);
+        } else {
+            consoleWrite("Incomplete RA, DEC inputs for Goto");
         }
     });
     //M31 button
@@ -250,6 +260,16 @@ $(document).ready(function() {
     $("#abortBtn").click(function() {
         stopSlew(MNT.DRV1);
         stopSlew(MNT.DRV2);
+    });
+    $("#calibrateRAEncoderBtn").click(function() {
+        if (window.confirm("Are you sure you want to recalibrate the RA unit's encoders, and the mount is in the correct position?")) {
+            calibrateRA();
+        }
+    });
+    $("#calibrateDEEncoderBtn").click(function() {
+        if (window.confirm("Are you sure you want to recalibrate the DEC unit's encoders, and the mount is in the correct position?")) {
+            calibrateDE();
+        }
     });
     //Connect button
     $("#connectBtn").click(function() {

@@ -279,6 +279,22 @@ function startAlignment(RATarString, DECTarString) {
     }
 }
 
+function startGoto(RATarString, DECTarString) {
+    try {
+        // $("#gotoSubmitBtn").prop('disabled', true);
+        // RATarget = parseFloat(RATarString);
+        // DECTarget = parseFloat(DECTarString);
+        // Translation
+        var raGotoDes = parseFloat(hmsToDecimal(RATarString));
+        var deGotoDes = dmsToDecimal(DECTarString);
+        var targetDesString = "RA = " + RATarString + ", DEC = " + DECTarString;
+        GOTOTarget(raGotoDes, deGotoDes, "", targetDesString);
+    } catch (e) {
+        // $("#gotoSubmitBtn").prop('disabled', false);
+        consoleWrite("Goto Error: " + e);
+    }
+}
+
 function getRALoc() {
     //get RA, dec location
     cmdQ.push(MNT.DRV1 + DRV.POS + "?");
@@ -394,7 +410,7 @@ function getEncodersFromRADE(ra, de) {
     var dt = (Date.now() - raAlignTime) / (1000 * 3600); //convert to hours
     var Lst = range24(lstAtAlign + dt);
     var dHA = rangeHA(Lst - ra);
-    console.log("dHA=" + dHA);
+    consoleWrite("dHA=" + dHA);
     // Northern Hemisphere
     if (hemisphere == HEM.N) {
         // "Normal" Pointing State (East, looking West)
@@ -448,6 +464,18 @@ function goToHome() {
     consoleWrite("Going to neutral position...")
     cmdQ.push(MNT.DRV1 + DRV.POS + "0");
     cmdQ.push(MNT.DRV2 + DRV.POS + "0");
+    sendCmd();
+}
+
+function calibrateRA() {
+    consoleWrite("Calibrating RA encoders...")
+    cmdQ.push(MNT.DRV1 + "y" + "0");
+    sendCmd();
+}
+
+function calibrateDE() {
+    consoleWrite("Calibrating DEC encoders...")
+    cmdQ.push(MNT.DRV2 + "y" + "0");
     sendCmd();
 }
 
