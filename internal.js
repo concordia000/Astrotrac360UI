@@ -266,6 +266,7 @@ $(document).ready(function() {
     });
     // Clear alignment button
     $("#clearAlignBtn").click(clearAlignment);
+    $("#toggleDeOffUse").click(toggleDeOffUse);
 
     // $("#calibrateRAEncoderBtn").click(function() {
     //     if (window.confirm("Are you sure you want to recalibrate the RA unit's encoders, and the mount is in the correct position?")) {
@@ -477,6 +478,11 @@ function setAlignmentCookie(alignmentString) {
 function updateAlignmentText(raAlignTime, lstAtAlign, DECOffset) {
     var text = "Alignment Time: " + raAlignTime.toUTCString + "</br>Local Sidereal Time at alignment: " + lstAtAlign + "<br>DEC Offset (minutes): " + DECOffset * 60;
     $("#alignString").html(text);
+}
+
+function toggleDeOffUse() {
+    useDeOffset = !useDeOffset;
+    $('#deOffUse').text("Using DEC Offset: " + useDeOffset.toString().toUpperCase());
 }
 
 function disableControls(isDisabled) {
