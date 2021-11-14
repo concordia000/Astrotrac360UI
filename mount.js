@@ -499,10 +499,10 @@ function GOTOTarget(RASlewTarget, DECSlewTarget, targetDescription) {
         // var DECDes = DECSlewTarget + DECOffset;
         // use "Indi" formulae for destinations
         var deOff = 0;
-        if (useDeOffset) {
+        if (useDeOffset && (Math.abs(DECSlewTarget - DECOffset <= 90))) { //if the DEC correction will put DEC > +-90 degrees, do not apply the DEC correction
             deOff = DECOffset;
         }
-        var [RADes, DECDes] = getEncodersFromRADE(RASlewTarget, DECSlewTarget - deOff);
+        var [RADes, DECDes] = getEncodersFromRADE(RASlewTarget, rangeDec(DECSlewTarget - deOff)); //Limit declination just in case the user enters 100 degrees or something
         var tHA = calculateSlewTime(RADes - DRV1Pos);
         tHA = tHA * SID_VEL_DEG * hemisphere; //RA offset due to tracking
         RADes += tHA;
