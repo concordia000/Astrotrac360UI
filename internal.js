@@ -106,6 +106,9 @@ function init() {
     getSettings(); //Request from drive
     loadUserSetting();
     disableControls(false);
+    if (autoResume) {
+        resumeAlignment();
+    }
 }
 
 function downN(e) {
@@ -261,16 +264,19 @@ $(document).ready(function() {
         stopSlew(MNT.DRV1);
         stopSlew(MNT.DRV2);
     });
-    $("#calibrateRAEncoderBtn").click(function() {
-        if (window.confirm("Are you sure you want to recalibrate the RA unit's encoders, and the mount is in the correct position?")) {
-            calibrateRA();
-        }
-    });
-    $("#calibrateDEEncoderBtn").click(function() {
-        if (window.confirm("Are you sure you want to recalibrate the DEC unit's encoders, and the mount is in the correct position?")) {
-            calibrateDE();
-        }
-    });
+    // Clear alignment button
+    $("#clearAlignBtn").click(clearAlignment);
+
+    // $("#calibrateRAEncoderBtn").click(function() {
+    //     if (window.confirm("Are you sure you want to recalibrate the RA unit's encoders, and the mount is in the correct position?")) {
+    //         calibrateRA();
+    //     }
+    // });
+    // $("#calibrateDEEncoderBtn").click(function() {
+    //     if (window.confirm("Are you sure you want to recalibrate the DEC unit's encoders, and the mount is in the correct position?")) {
+    //         calibrateDE();
+    //     }
+    // });
     //Connect button
     $("#connectBtn").click(function() {
         var mountPath = $("#connectIPInput").val();
@@ -413,6 +419,64 @@ function consoleWrite(str) {
     lineNum++;
     var innerHTML = document.getElementById("placeholder").innerHTML;
     document.getElementById("placeholder").innerHTML = lineNum + ": " + str + "<br/>" + innerHTML;
+}
+
+//from w3s
+function setCookie(cname, cvalue, exdays) {
+    const d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    let expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+function resumeAlignment() {
+    let alignString = getCookie("alignment");
+    if (alignString != "") {
+        try {
+            var alignObj = JSON.parse(alignString);
+            lstAtAlign = alignObj['lstAtAlign'];
+            raAlignTime = alignObj['raAlignTime'];
+            DECOffset = alignObj['DECOffset'];
+            updateAlignmentText(raAlignTime, lstAtAlign, DECOffset);
+        } catch (e) {
+            consoleWrite("Error resuming alignment: " + e);
+        }
+    }
+}
+
+function clearAlignment() {
+    lstAtAlign = 0;
+    raAlignTime = Date.now();
+    DECOffset = 0;
+    const alignObj = { raAlignTime: raAlignTime, lstAtAlign: lstAtAlign, DECOffset: DECOffset };
+    var alignmentString = JSON.stringify(alignObj);
+    setAlignmentCookie(alignmentString);
+    updateAlignmentText(raAlignTime, lstAtAlign, DECOffset);
+}
+
+function setAlignmentCookie(alignmentString) {
+    setCookie("alignment", alignmentString, cookieExDays);
+}
+
+function updateAlignmentText(raAlignTime, lstAtAlign, DECOffset) {
+    var text = "Alignment Time: " + raAlignTime.toUTCString + "</br>Local Sidereal Time at alignment: " + lstAtAlign + "<br>DEC Offset (minutes): " + DECOffset * 60;
+    $("#alignString").html(text);
 }
 
 function disableControls(isDisabled) {
