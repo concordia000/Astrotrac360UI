@@ -213,6 +213,10 @@ var autoResume = true;
 
 var cookieExDays = 180;
 
+var currentObject;
+
+var currentObjectDescString = "";
+
 
 
 //***Test astro functions***
@@ -293,8 +297,14 @@ function startGoto(RATarString, DECTarString) {
         // Translation
         var raGotoDes = parseFloat(hmsToDecimal(RATarString));
         var deGotoDes = dmsToDecimal(DECTarString);
-        var targetDesString = "RA = " + RATarString + ", DEC = " + DECTarString;
-        GOTOTarget(raGotoDes, deGotoDes, "", targetDesString);
+        var targetDesString = "";
+        // if coordinates have not been changed manually
+        if (RATarString == currentObject.ra && DECTarString == currentObject.dec) {
+            targetDesString = currentObjectDescString;
+        } else {
+            targetDesString = "RA = " + raGotoDes + ", DEC = " + deGotoDes;
+        }
+        GOTOTarget(raGotoDes, deGotoDes, targetDesString);
     } catch (e) {
         // $("#gotoSubmitBtn").prop('disabled', false);
         consoleWrite("Goto Error: " + e);

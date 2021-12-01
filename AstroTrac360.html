@@ -13,6 +13,9 @@
     <title>AstroTrac 360 v1.1</title>
     <link rel="stylesheet" href="jquery.mobile-1.4.5.min.css" />
     <link rel="stylesheet" href="style.css?v=0" />
+    <!-- Load Messier/NGC/IC database 
+    Credits: Mattia Verga https://github.com/mattiaverga/OpenNGC -->
+    <script type="text/javascript" src="./data/ngc_ic_messier.json"></script>
     <script src="jquery-1.11.1.min.js"></script>
     <script src="jquery.mobile-1.4.5.min.js"></script>
     <script src="astro.js"></script>
@@ -53,6 +56,10 @@
                 <input type="submit" id="clearAlignBtn" value="Clear Alignment">
             </div>
             <div id="gotoForm">
+                <h5>Search NGC/IC/Messier objects</h5>
+                <input type="text" id="objectSearchBar" label="Search NGC/IC/Messier objects">
+                <input type="submit" id="objectSearchBtn" value="Find">
+                <h5 id="objectResultText"> Current object: </h5>
                 <h5> GOTO RA target (hh:mm:ss) </h5>
                 <input type="text" id="gotoRAInput" label="RA Target">
                 <h5> GOTO DEC target (+/-dd mm ss) </h5>
@@ -60,7 +67,7 @@
                 <button type="submit" id="gotoSubmitBtn">GOTO</button>
                 <h5 id="deOffUse">Using DEC Offset: TRUE</h5>
                 <input type="submit" id="toggleDeOffUse" value="Toggle DEC Offset use">
-                <input type="submit" id="goToM31Btn" value="Goto M31">
+                <!-- <input type="submit" id="goToM31Btn" value="Goto M31"> -->
                 <input type="submit" id="goToHomeBtn" value="Goto Home Position">
                 <input type="submit" id="abortBtn" value="ABORT">
                 <!-- <H5>ENCODER CALIBRATION</H5>

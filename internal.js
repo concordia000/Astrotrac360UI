@@ -2,6 +2,7 @@
 //Modified by Jerry Li, 17/10/2021
 
 var lineNum = 0;
+var ngcIcObj = new Array();
 
 function onPageLoad() {
     connectToMount(self.location.host);
@@ -237,6 +238,12 @@ $(document).ready(function() {
     if (tab == 'settings') {
         $('#custom-tabs__settings').click();
     }
+    // Load Messier/NGC/IC database 
+    // Credits: Mattia Verga https://github.com/mattiaverga/OpenNGC
+    // $.getJSON("./data/ngc-ic-messier-catalog.json", function(data) {
+    //     ngcIcObj = data;
+    //     consoleWrite("NGC/IC/Messier object database loaded");
+    // });
     //enable alignment command btn
     $("#alignSubmitBtn").click(function() {
         var RAIn = $("#alignRAInput").val();
@@ -257,8 +264,10 @@ $(document).ready(function() {
             consoleWrite("Incomplete RA, DEC inputs for Goto");
         }
     });
+    //Find object button
+    $("#objectSearchBtn").click(searchObject);
     //M31 button
-    $("#goToM31Btn").click(goToM31);
+    // $("#goToM31Btn").click(goToM31);
     $("#goToHomeBtn").click(goToHome);
     $("#abortBtn").click(function() {
         stopSlew(MNT.DRV1);
@@ -284,7 +293,45 @@ $(document).ready(function() {
         mountPath = mountPath.trim();
         connectToMount(mountPath);
     });
+    for (var item in ngc_ic_messier) {
+        ngcIcObj.push(item.fields);
+    };
 });
+
+
+//Rudimentary search function for goto
+function searchObject() {
+    var objText = $("#objectSearchBar").val().trim().toUpperCase();
+    var result = ngc_ic_messier.find(element => JSON.stringify(element.fields).toUpperCase().includes(objText));
+    if (typeof(result) == "object") {
+        currentObject = result.fields;
+        var descString = "";
+        if (typeof(currentObject.common_names) == "string") {
+            descString = descString + currentObject.common_names + ", ";
+        }
+        if (typeof(currentObject.m) == "string") {
+            descString = descString + currentObject.m;
+        } else if (typeof(currentObject.ngc) == "string") {
+            descString = descString + currentObject.ngc;
+        } else {
+            descString = descString + currentObject.name;
+        }
+        currentObjectDescString = descString;
+        consoleWrite("Object found: " + descString);
+        updateCurrentObjUI();
+    } else {
+        consoleWrite("ERROR: NGC/IC/Messier object not found");
+    }
+}
+
+//Update the found item ui for the information of the entity
+function updateCurrentObjUI() {
+    $("#objectResultText").text("Current object: " + currentObjectDescString);
+    $("#gotoRAInput").val(currentObject.ra);
+    $("#gotoDECInput").val(currentObject.dec);
+}
+
+
 
 //Enabling Url Tabs
 var getUrlParameter = function getUrlParameter(sParam) {
