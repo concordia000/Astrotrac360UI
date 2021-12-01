@@ -523,7 +523,8 @@ function setAlignmentCookie(alignmentString) {
 }
 
 function updateAlignmentText(raAlignTime, lstAtAlign, DECOffset) {
-    var text = "Alignment Time: " + raAlignTime.toUTCString + "</br>Local Sidereal Time at alignment: " + lstAtAlign + "<br>DEC Offset (minutes): " + DECOffset * 60;
+    var raAlignDate = new Date(raAlignTime)
+    var text = "Alignment Time: " + raAlignDate.toUTCString() + "</br>Local Sidereal Time at alignment: " + lstAtAlign + "<br>DEC Offset (minutes): " + DECOffset * 60;
     $("#alignString").html(text);
 }
 
