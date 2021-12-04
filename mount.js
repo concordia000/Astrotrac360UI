@@ -207,7 +207,7 @@ var lstAtAlign = 0; //in hours
 
 var mountConfig = CONF.GEM;
 
-var useDeOffset = true;
+var useDeOffset = false;
 
 var autoResume = true;
 

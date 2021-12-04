@@ -2,7 +2,9 @@
 //Modified by Jerry Li, 17/10/2021
 
 var lineNum = 0;
-var ngcIcObj = new Array();
+// var ngcIcObj = new Array();
+var ngcMessierObj;
+var icObj;
 
 function onPageLoad() {
     connectToMount(self.location.host);
@@ -275,7 +277,8 @@ $(document).ready(function() {
     });
     // Clear alignment button
     $("#clearAlignBtn").click(clearAlignment);
-    $("#toggleDeOffUse").click(toggleDeOffUse);
+    // Dec offset button
+    // $("#toggleDeOffUse").click(toggleDeOffUse);
 
     // $("#calibrateRAEncoderBtn").click(function() {
     //     if (window.confirm("Are you sure you want to recalibrate the RA unit's encoders, and the mount is in the correct position?")) {
@@ -293,16 +296,34 @@ $(document).ready(function() {
         mountPath = mountPath.trim();
         connectToMount(mountPath);
     });
-    for (var item in ngc_ic_messier) {
-        ngcIcObj.push(item.fields);
-    };
+    // for (var item in ngc_ic_messier) {
+    //     ngcIcObj.push(item.fields);
+    // };
 });
 
 
 //Rudimentary search function for goto
 function searchObject() {
     var objText = $("#objectSearchBar").val().trim().toUpperCase();
-    var result = ngc_ic_messier.find(element => JSON.stringify(element.fields).toUpperCase().includes(objText));
+    var result;
+    // split the NGC/IC databases because it is janky
+    if (typeof(icObj) == "undefined") {
+        icObj = ngc_ic_messier.filter(item => (item.fields.catalog == "IC"));
+    }
+    if (typeof(ngcMessierObj) == "undefined") {
+        ngcMessierObj = ngc_ic_messier.filter(item => (item.fields.catalog != "IC"));
+    }
+    // If object is Messier, exact match
+    if (/M\s?([0-9])+/.test(objText)) {
+        result = ngcMessierObj.find(element => (element.fields.m == objText));
+    } else if (/NGC\s?([0-9])+/.test(objText)) { // If NGC exact search
+        result = ngcMessierObj.find(element => (element.fields.name == objText));
+    } else if (/IC\s?([0-9])+/.test(objText)) { // If IC exact match in IC database
+        result = icObj.find(element => (element.fields.name == objText));
+    } else { // fuzzy search among all fields
+        result = ngc_ic_messier.find(element => JSON.stringify(element.fields).toUpperCase().includes(objText));
+    }
+    // var result = ngc_ic_messier.find(element => JSON.stringify(element.fields).toUpperCase().includes(objText));
     if (typeof(result) == "object") {
         currentObject = result.fields;
         var descString = "";
